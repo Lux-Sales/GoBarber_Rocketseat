@@ -1,6 +1,12 @@
 import Appointment from '../models/Appointment'
 import { isEqual } from 'date-fns'
 
+//Listar, deletar, adicionar, enfim, manipular o dado
+
+interface CreateAppointmentDTO{
+    barberName: string
+    date:Date
+}
 class AppointmentsRepository {
     private appointments: Appointment[]
 
@@ -18,8 +24,8 @@ class AppointmentsRepository {
         return appointment || null
     }
 
-    public create(barberName: string, date: Date) : Appointment {
-        const appointment = new Appointment(barberName, date)
+    public create({barberName, date} : CreateAppointmentDTO) : Appointment {
+        const appointment = new Appointment({barberName, date})
         this.appointments.push(appointment)
         return appointment
     }
