@@ -1,34 +1,37 @@
+import { getCustomRepository } from 'typeorm'
 import { Router } from 'express'
 import { parseISO } from 'date-fns'
+
 import AppointmentsRepository from '../repositories/AppointmentsRepository'
 import CreateAppointmentService from '../service/CreateAppointmentService'
 
 //receber requisição, chamar outro arquivo, dar resposta
 
 const appointmentsRouter = Router()
-const appointmentsRepository = new AppointmentsRepository()
 
-appointmentsRouter.get('/', (req,resp)=>{
-    const appointments = appointmentsRepository.getAll()
-    return resp.json(appointments)
-})
+appointmentsRouter.get('/', async(req, resp) => {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository)
+    const appointments = await appointmentsRepository.find();
 
-appointmentsRouter.post('/', (request, response) => {
+    return resp.json(appointments);
+});
 
+appointmentsRouter.post('/',  async (request, response) => {
     try{
-        const { barberName, date } = request.body
+
+        const { barberID, date } = request.body
         
         const parsedDate = parseISO(date)
         
-        const createAppointmentService = new CreateAppointmentService(appointmentsRepository)
+        const createAppointmentService = new CreateAppointmentService()
         
-        const appointment = createAppointmentService.execute({date: parsedDate, barberName})
+        const appointment = await createAppointmentService.execute({ date: parsedDate, barberID })
         
         return response.json(appointment)
+    }catch(err){
+        return response.status(400).json({error:err.message})
     }
-    catch(error){
-        response.status(400).json({error: error.message})
-    }
-})
+}
+)
 
 export default appointmentsRouter

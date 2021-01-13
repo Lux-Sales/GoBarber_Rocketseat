@@ -1,19 +1,34 @@
-import { uuid } from 'uuidv4'
-
+import {
+Entity,
+PrimaryGeneratedColumn,
+Column,
+CreateDateColumn,
+UpdateDateColumn,
+ManyToOne,
+JoinColumn
+} from 'typeorm'
+import User from './User'
 // Como um dado é salvo na aplicação, como é composto
+@Entity('appointments')
 class Appointment {
+    @PrimaryGeneratedColumn('uuid')
     id: string
-    
-    barberName: string
-    
+
+    @Column()
+    barberID: string
+
+    @ManyToOne(() => User)
+    @JoinColumn({name: 'barberID'})
+    barber: User
+
+    @Column('timestamp with time zone')
     date: Date
 
-    constructor({barberName, date}: Omit<Appointment,'id'>){
-        this.id = uuid()
-        this.barberName = barberName,
-        this.date = date
-    }
+    @CreateDateColumn()
+    created_at: Date
 
+    @UpdateDateColumn()
+    updated_at: Date
 }
 
 export default Appointment
