@@ -19,7 +19,6 @@ appointmentsRouter.get('/', async(req, resp) => {
 });
 
 appointmentsRouter.post('/',  async (request, response) => {
-    try{
 
         const { barberID, date } = request.body
         
@@ -30,9 +29,6 @@ appointmentsRouter.post('/',  async (request, response) => {
         const appointment = await createAppointmentService.execute({ date: parsedDate, barberID })
         
         return response.json(appointment)
-    }catch(err){
-        return response.status(400).json({error:err.message})
-    }
 }
 )
 
